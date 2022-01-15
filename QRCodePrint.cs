@@ -25,10 +25,6 @@ namespace QRCodeGenerator
                     {
                         bitmap.SetPixel(i, j, Color.Black);
                     }
-                    if(matrix[i-1,j-1] == 2)
-                    {
-                        bitmap.SetPixel(i, j, Color.Blue);
-                    }
                     if (matrix[i - 1, j - 1] == 0)
                     {
                         bitmap.SetPixel(i, j, Color.White);

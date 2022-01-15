@@ -1,0 +1,11 @@
+C:\Users\Arseniy\source\repos\QRCodeGenerator\bin\Debug\QRCodeGenerator.exe.config
+C:\Users\Arseniy\source\repos\QRCodeGenerator\bin\Debug\QRCodeGenerator.exe
+C:\Users\Arseniy\source\repos\QRCodeGenerator\bin\Debug\QRCodeGenerator.pdb
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.csproj.AssemblyReference.cache
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.csproj.SuggestedBindingRedirects.cache
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.Form1.resources
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.Properties.Resources.resources
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.csproj.GenerateResource.cache
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.csproj.CoreCompileInputs.cache
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.exe
+C:\Users\Arseniy\source\repos\QRCodeGenerator\obj\Debug\QRCodeGenerator.pdb

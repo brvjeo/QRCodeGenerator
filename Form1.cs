@@ -1,16 +1,9 @@
-﻿using QRCodeGenerator.Properties;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using PdfSharp.Drawing;
-using static QRCodeGenerator.Printer;
 using BitMatrix;
 using System.IO;
 using System.Drawing.Imaging;
@@ -19,31 +12,41 @@ namespace QRCodeGenerator
 {
     public partial class Form1 : Form
     {
+        private Bitmap QRCode;
+        private Matrix matrix;
+
+
         private string dataText;
         private Printer printer;
         private Form dateForm;
         private MonthCalendar calendar;
         private Button dateButton;
-        private String choosenDate = null;
-        private Bitmap QRCode = null;
+        private string choosenDate;
+        
         private ByteUtil byteUtil;
         public Form1()
         {
             InitializeComponent();
-            this.BackColor = Color.White;
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.Resize += new EventHandler(Form1_Resize);
-            this.MaximizeBox = false;
-            
+
+            QRCode = null;
+            matrix = null;
+            choosenDate = "";
+            //textbox
             textBox1.Location = new Point(this.Width/2 - textBox1.Width/2, this.Height/2 + textBox1.Height*2);
-            textBox1.MaxLength = 2330;
+            textBox1.MaxLength = 100;
+            //
+            //panel
             panel1.Location = new Point(this.Width / 2 - panel1.Width / 2, textBox1.Top - textBox1.Height * 2 - panel1.Height);
             panel1.Height = this.Height / 2 - textBox1.Height;
             panel1.Dock = DockStyle.Top;
-            menuStrip1.BackColor = Color.White;
             panel1.BackColor = Color.White;
+            //
+            //button
             button1.Location = new Point(this.Width / 2 - button1.Width / 2, textBox1.Top + textBox1.Height * 2);
+            //
+
+
+            this.Resize += new EventHandler(Form1_Resize);
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -51,12 +54,11 @@ namespace QRCodeGenerator
         }
         private void Form1_Resize(object sender,EventArgs a)
         {
-            if(QRCode != null)
+            if (QRCode != null && matrix != null)
             {
-                DrawQRCode();
+                DrawQRCodeAsBitmap();
             }
         }
-        //Saving file
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if(QRCode != null)
@@ -72,7 +74,6 @@ namespace QRCodeGenerator
                 resized.Save(saveFile.FileName + ".png",ImageFormat.Png);
             }
         }
-        //exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Dispose();
@@ -217,18 +218,51 @@ namespace QRCodeGenerator
             byteUtil = new ByteUtil(text);
             byte[] dataBits = byteUtil.GenerateBitArray();
 
-            Matrix matrix = new Matrix(dataBits, byteUtil.GetVersion);
+            matrix = new Matrix(dataBits, byteUtil.GetVersion);
+
             QRCodePrint qrPrinter = new QRCodePrint(matrix);
             QRCode = qrPrinter.Print();
 
 
-            DrawQRCode();
+            DrawQRCodeAsBitmap();
+            //DrawQRCodeAsPaintings(matrix);
 
             printer = new Printer(QRCode);
             printer.PrintPage += new PrintPageEventHandler(printer.pr_PrintPage);
 
         }
-        private void DrawQRCode()
+        private void DrawQRCodeAsPaintings(Matrix matrix)
+        {
+            Graphics g = Graphics.FromHwnd(panel1.Handle);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            g.Clear(Color.White);
+
+            float areaSize = panel1.Height / 100 * 90;
+            float moduleSize = areaSize / matrix.Height;
+
+            float paddingTop = panel1.Height / 2 - areaSize / 2;
+            float paddingLeft = panel1.Width / 2 - areaSize / 2;
+
+            for (int i = 0; i < matrix.Width; i++)
+            {
+                for (int j = 0; j < matrix.Height; j++)
+                {
+                    if (matrix[i, j] == 1)
+                    {
+                        g.FillEllipse(Brushes.Black, paddingLeft, paddingTop, moduleSize, moduleSize);
+                        paddingTop += moduleSize;
+                    }
+                    else
+                    {
+                        g.FillEllipse(Brushes.White, paddingLeft, paddingTop, moduleSize, moduleSize);
+                        paddingTop += moduleSize;
+                    }
+                }
+                paddingTop -= moduleSize * matrix.Height;
+                paddingLeft += moduleSize;
+            }
+        }
+        private void DrawQRCodeAsBitmap()
         {
             if(QRCode != null)
             {
@@ -242,6 +276,12 @@ namespace QRCodeGenerator
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
                 g.DrawImage(QRCode, (panelWidth / 2 - size / 2) + 5, panelHeight / 2 - size / 2, size, size);
             }
+        }
+
+        private void infoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Данное приложение поддерживает кодировку UTF-8.\n\n(Если ваш сканер правильно не декодирует первоначальную информацию, значит сканер и генератор поддерживают разные кодировки,попробуйте другой сканер.)\nКод сгенерированный данным генератором поддерживает визуальную потерю 15% информации.Это означает,что при потере 15% процентов кода, первоначальная информация будет прочитана верно.\n\nБлагодаря этой особенности внуть кода можно поместить изображение.");
+
         }
     }
 }

@@ -141,6 +141,48 @@ namespace BitMatrix
             EmbedDataBits();
             if(version>=7) EmbedVersionCodes();
             EmbedFormatCodes();
+            if (version >= 6 && version < 16)
+            {
+                EmbedPicture(1);
+            }
+            if (version>=16)
+            {
+                EmbedPicture(2);
+            }
+        }
+
+        private void EmbedPicture(int type)
+        {
+            Bitmap bitmap;
+            if (type == 1)
+            {
+                bitmap = new Bitmap("57.bmp");
+            }
+            else
+            {
+                bitmap = new Bitmap("eagle.bmp");
+            }
+            int y = height / 2 - bitmap.Height / 2;
+            int x = width / 2 - bitmap.Width / 2;
+
+            for (int i = 0; i < bitmap.Width; i++)
+            {
+                for (int j = 0; j < bitmap.Height; j++)
+                {
+                    if ((bitmap.GetPixel(i, j) == Color.FromArgb(255, 255, 0, 0)))
+                    {
+                        continue;
+                    }
+                    if (bitmap.GetPixel(i, j) == Color.FromArgb(255, 0, 0, 0))
+                    {
+                        matrix[x + i, y + j] = 1;
+                    }
+                    else if (bitmap.GetPixel(i, j) == Color.FromArgb(255, 255, 255, 255))
+                    {
+                        matrix[x + i, y + j] = 0;
+                    }
+                }
+            }
         }
 
         private void EmbedFormatCodes()
