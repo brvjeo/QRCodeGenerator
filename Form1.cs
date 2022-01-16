@@ -16,6 +16,7 @@ namespace QRCodeGenerator
         private Matrix matrix;
 
 
+        private string path;
         private string dataText;
         private Printer printer;
         private Form dateForm;
@@ -31,6 +32,7 @@ namespace QRCodeGenerator
             QRCode = null;
             matrix = null;
             choosenDate = "";
+            path = new DirectoryInfo(@"..\..").FullName;
             //textbox
             textBox1.Location = new Point(this.Width/2 - textBox1.Width/2, this.Height/2 + textBox1.Height*2);
             textBox1.MaxLength = 100;
@@ -45,19 +47,21 @@ namespace QRCodeGenerator
             button1.Location = new Point(this.Width / 2 - button1.Width / 2, textBox1.Top + textBox1.Height * 2);
             //
 
+            QRCode = new Bitmap(path + @"\src\" + @"startCode.bmp");
+            DrawQRCodeAsBitmap();
+
 
             this.Resize += new EventHandler(Form1_Resize);
+            panel1.Paint += Panel1_Paint;
         }
-        private void Form1_Load(object sender, EventArgs e)
-        {
 
+        private void Panel1_Paint(object sender, PaintEventArgs e)
+        {
+            if(QRCode != null) DrawQRCodeAsBitmap();
         }
         private void Form1_Resize(object sender,EventArgs a)
         {
-            if (QRCode != null && matrix != null)
-            {
-                DrawQRCodeAsBitmap();
-            }
+            if (QRCode != null) DrawQRCodeAsBitmap(); 
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -173,12 +177,6 @@ namespace QRCodeGenerator
             }
             GenerateQRCode(text);
         }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-            Panel panel1 = (Panel)sender;
-            e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-        }
         private void button1_Click(object sender, EventArgs e)
         {
             string s = textBox1.Text;
@@ -222,7 +220,6 @@ namespace QRCodeGenerator
 
             QRCodePrint qrPrinter = new QRCodePrint(matrix);
             QRCode = qrPrinter.Print();
-
 
             DrawQRCodeAsBitmap();
             //DrawQRCodeAsPaintings(matrix);
@@ -277,7 +274,6 @@ namespace QRCodeGenerator
                 g.DrawImage(QRCode, (panelWidth / 2 - size / 2) + 5, panelHeight / 2 - size / 2, size, size);
             }
         }
-
         private void infoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Данное приложение поддерживает кодировку UTF-8.\n\n(Если ваш сканер правильно не декодирует первоначальную информацию, значит сканер и генератор поддерживают разные кодировки,попробуйте другой сканер.)\nКод сгенерированный данным генератором поддерживает визуальную потерю 15% информации.Это означает,что при потере 15% процентов кода, первоначальная информация будет прочитана верно.\n\nБлагодаря этой особенности внуть кода можно поместить изображение.");

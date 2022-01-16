@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 
 namespace BitMatrix
 {
     public class Matrix
     {
+        private string path;
         private static int[] MatrixSize = new int[]
         {
             0,21,25,29,33,37,41,45,49,53,57,61,
@@ -131,6 +133,7 @@ namespace BitMatrix
 
         public Matrix(byte[] dataBits,int version)
         {
+            path = new DirectoryInfo(@"..\..").FullName;
             width = MatrixSize[version];
             height = MatrixSize[version];
             this.dataBits = dataBits;
@@ -156,11 +159,11 @@ namespace BitMatrix
             Bitmap bitmap;
             if (type == 1)
             {
-                bitmap = new Bitmap("57.bmp");
+                bitmap = new Bitmap(path + @"\src\" + "57.bmp");
             }
             else
             {
-                bitmap = new Bitmap("eagle.bmp");
+                bitmap = new Bitmap(path + @"\src\" + "eagle.bmp");
             }
             int y = height / 2 - bitmap.Height / 2;
             int x = width / 2 - bitmap.Width / 2;
